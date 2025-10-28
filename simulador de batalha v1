@@ -1,0 +1,122 @@
+import random
+
+# ===== Classe base =====
+class Personagem:
+    def __init__(self, nome, forca, inteligencia, velocidade, vitalidade):
+        self.nome = nome
+        self.forca = forca
+        self.inteligencia = inteligencia
+        self.velocidade = velocidade
+        self.vitalidade = vitalidade
+        self.vivo = True
+
+    def atacar(self, alvo):
+        """Método genérico — sobrescrito nas subclasses"""
+        pass
+
+    def defender(self, dano):
+        """Reduz vitalidade de acordo com dano"""
+        defesa = self.calcular_defesa()
+        dano_real = max(0, dano - defesa)
+        self.vitalidade -= dano_real
+        print(f"{self.nome} defendeu {defesa} e recebeu {dano_real} de dano! (HP: {self.vitalidade})")
+
+        if self.vitalidade <= 0:
+            self.vivo = False
+            print(f"💀 {self.nome} foi derrotado!")
+
+    def calcular_defesa(self):
+        """Método genérico de defesa — pode ser sobrescrito"""
+        return int((self.velocidade + self.inteligencia) / 4)
+
+
+# ====== Classes de Heróis ======
+class Guerreiro(Personagem):
+    def atacar(self, alvo):
+        dano = self.forca * 2 + random.randint(0, 5)
+        print(f"🗡️ {self.nome} ataca {alvo.nome} causando {dano} de dano!")
+        alvo.defender(dano)
+
+class Mago(Personagem):
+    def atacar(self, alvo):
+        dano = self.inteligencia * 2 + random.randint(0, 8)
+        print(f"✨ {self.nome} lança magia em {alvo.nome} causando {dano} de dano!")
+        alvo.defender(dano)
+
+class Arqueiro(Personagem):
+    def atacar(self, alvo):
+        dano = int((self.velocidade + self.forca) * 1.5) + random.randint(0, 4)
+        print(f"🏹 {self.nome} dispara flecha em {alvo.nome} causando {dano} de dano!")
+        alvo.defender(dano)
+
+
+# ====== Classes de Inimigos ======
+class Inimigo(Personagem):
+    pass
+
+class Orc(Personagem):
+    def atacar(self, alvo):
+        dano = self.forca * 2 + random.randint(3, 7)
+        print(f"👹 {self.nome} golpeia {alvo.nome} com força brutal! Dano: {dano}")
+        alvo.defender(dano)
+
+class Goblin(Personagem):
+    def atacar(self, alvo):
+        dano = self.velocidade * 2 + random.randint(0, 3)
+        print(f"👺 {self.nome} ataca rapidamente {alvo.nome}! Dano: {dano}")
+        alvo.defender(dano)
+
+class Necromante(Personagem):
+    def atacar(self, alvo):
+        dano = self.inteligencia * 2 + random.randint(0, 10)
+        print(f"💀 {self.nome} conjura feitiço sombrio contra {alvo.nome}! Dano: {dano}")
+        alvo.defender(dano)
+
+
+# ====== Função de batalha ======
+def batalha(herois, inimigos):
+    print("\n⚔️ INÍCIO DA BATALHA ⚔️\n")
+
+    while any(h.vivo for h in herois) and any(i.vivo for i in inimigos):
+        heroi = random.choice([h for h in herois if h.vivo])
+        inimigo = random.choice([i for i in inimigos if i.vivo])
+
+        # Escolher aleatoriamente quem ataca
+        atacante, defensor = random.choice([(heroi, inimigo), (inimigo, heroi)])
+
+        print(f"\n🎯 {atacante.nome} vai atacar {defensor.nome}!")
+        atacante.atacar(defensor)
+
+    print("\n🏁 FIM DA BATALHA 🏁")
+    if any(h.vivo for h in herois):
+        print("✨ Os heróis venceram!")
+    else:
+        print("☠️ Os inimigos venceram!")
+
+
+# ====== Criando personagens ======
+herois = [
+    Guerreiro("Guerreiro", forca=8, inteligencia=4, velocidade=5, vitalidade=40),
+    Mago("Mago", forca=3, inteligencia=9, velocidade=4, vitalidade=30),
+    Arqueiro("Arqueiro", forca=5, inteligencia=5, velocidade=8, vitalidade=35)
+]
+
+inimigos = [
+    Orc("Orc", forca=9, inteligencia=3, velocidade=4, vitalidade=40),
+    Goblin("Goblin", forca=4, inteligencia=4, velocidade=9, vitalidade=25),
+    Necromante("Necromante", forca=2, inteligencia=10, velocidade=3, vitalidade=30)
+]
+
+# ====== Executar a batalha ======
+batalha(herois, inimigos)
+
+
+
+
+
+
+
+
+
+
+# herança e polimorfismo
